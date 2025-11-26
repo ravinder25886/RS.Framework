@@ -1,0 +1,73 @@
+## ASP.NET Core & Blazor - Recursive ignores 
+**/obj/
+**/bin/
+**/net8.0/
+**/Debug/
+*.dll
+*.cache
+*.AssemblyInfo.cs
+*.AssemblyInfoInputs.cache
+**/*.exe
+**/*.log
+**/*.tmp
+**/*.user
+**/*.suo
+**/*.swp
+**/*.pdb
+**/*.cache
+.vs/
+.vscode/
+.idea/
+*.sln.docstates
+*.DotSettings.user
+
+ProjectName.AdminApp/bin/
+ProjectName.AdminApp/obj/
+ProjectName.Application/bin/
+ProjectName.Application/obj/
+ProjectName.ClientApp/bin/
+ProjectName.ClientApp/obj/
+ProjectName.Domain/bin/
+ProjectName.Domain/obj/
+ProjectName.Infrastructure/bin/
+ProjectName.Infrastructure/obj/
+ProjectName.Utilities/bin/
+ProjectName.Utilities/obj/
+
+# Blazor specifics
+**/wwwroot/
+**/*.g.cs
+**/*.g.i.cs
+Generated/
+
+# Config & secrets
+secrets.json
+*.pfx
+*.key
+*.publishsettings
+appsettings.Development.json
+appsettings.Local.json
+.env*
+.env
+
+# Entity Framework
+**/Migrations/
+
+# Tests & coverage
+TestResults/
+coverage/
+
+# Node / SPA
+node_modules/
+dist/
+build/
+
+# Docker
+*.pid
+docker-compose.override.yml
+
+# Temporary/backups
+*.orig
+*.rej
+
+
