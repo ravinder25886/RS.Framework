@@ -16,7 +16,7 @@ public class TestApiController(IHttpClientFactoryService httpService) : Controll
     [HttpGet("posts")]
     public async Task<IActionResult> GetPosts()
     {
-        HttpResult<List<Post>> result = await _httpService.GetAsync<List<Post>>("posts",clientName: _apiName);
+        HttpResult<List<Post>> result = await _httpService.GetAsync<List<Post>>("posts",clientName: _apiName, cancellationToken: HttpContext.RequestAborted);
         return !result.IsSuccess ? BadRequest(result.Message) : Ok(result.Data);
     }
 
