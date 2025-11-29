@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace RS.HttpClientFactoryService;
+namespace RS.HttpClientFactoryService.Models;
 
 public class HttpResult
 {

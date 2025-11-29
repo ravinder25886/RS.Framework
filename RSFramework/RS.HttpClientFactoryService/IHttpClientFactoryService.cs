@@ -1,3 +1,5 @@
+using RS.HttpClientFactoryService.Models;
+
 namespace RS.HttpClientFactoryService;
 public interface IHttpClientFactoryService
 {
@@ -62,7 +64,11 @@ public interface IHttpClientFactoryService
     /// <param name="headers">Optional additional headers.</param>
     /// <param name="clientName">Optional named HttpClient configuration.</param>
     /// <returns>Task<T> representing the HTTP response.</returns>
-    public Task<T> GetObjectAsync<T>(string url);
+    public Task<T> GetObjectAsync<T>(string url,
+     string? authHeaderName = null,
+     string? xAuthToken = null,
+     Dictionary<string, string>? headers = null,
+     string clientName = "");
 
     // ============================================================
     // DELETE

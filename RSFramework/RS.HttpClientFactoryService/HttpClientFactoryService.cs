@@ -2,6 +2,9 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+
+using RS.HttpClientFactoryService.Models;
 
 namespace RS.HttpClientFactoryService;
 
@@ -20,6 +23,7 @@ public int HttpClientTimeout { get; set; } = 0;
             PropertyNameCaseInsensitive = true,
             WriteIndented = false
         };
+        _jsonOptions.Converters.Add(new JsonStringEnumConverter());
     }
 
     // ============================================================
@@ -80,7 +84,15 @@ public int HttpClientTimeout { get; set; } = 0;
         {
             throw new UnauthorizedAccessException();
         }
-
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            return new HttpResult<T>
+            {
+                IsSuccess = false,
+                Message = "Item not found",
+                HttpStatusCode = response.StatusCode
+            };
+        }
         if (!response.IsSuccessStatusCode)
         {
             return new HttpResult<T>
@@ -113,7 +125,7 @@ public int HttpClientTimeout { get; set; } = 0;
         string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null, string clientName = "")
     {
-        using HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
+      HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
 
         HttpContent? content = null;
         if (payload != null)
@@ -138,37 +150,29 @@ public int HttpClientTimeout { get; set; } = 0;
     public async Task<HttpResponseMessage> GetRawAsync(string uri, string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null, string clientName = "")
     {
-        using HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
+      HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         return await SendBasic(HttpMethod.Get, uri, client, null);
     }
 
     public async Task<byte[]> GetByteArrayAsync(string uri, string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null, string clientName = "")
     {
-        using HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
+      HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         HttpResponseMessage response = await SendBasic(HttpMethod.Get, uri, client, null);
         return await response.Content.ReadAsByteArrayAsync();
     }
 
-    public async Task<T> GetObjectAsync<T>(string url)
+    public async Task<T> GetObjectAsync<T>(
+     string url,
+     string? authHeaderName = null,
+     string? xAuthToken = null,
+     Dictionary<string, string>? headers = null,
+     string clientName = "")
     {
-        using HttpClient client = _httpClientFactory.CreateClient();
-        HttpResponseMessage response = await client.GetAsync(url);
-
-        if (response.StatusCode == HttpStatusCode.Unauthorized)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
-        if (response.StatusCode == HttpStatusCode.NotFound)
-        {
-            throw new Exception("item not found.");
-        }
-
-        response.EnsureSuccessStatusCode();
-        string body = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<T>(body, _jsonOptions)!;
+        return await SendJsonAsync<T>(HttpMethod.Get, url, null, authHeaderName, xAuthToken, headers, clientName)
+       .ContinueWith(t => t.Result.Data!);
     }
+
 
     // ============================================================
     // DELETE
@@ -176,7 +180,7 @@ public int HttpClientTimeout { get; set; } = 0;
     public async Task<HttpResult> DeleteAsync(string uri, string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null, string clientName = "")
     {
-        using HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
+      HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         HttpResponseMessage response = await SendBasic(HttpMethod.Delete, uri, client, null);
         string body = await response.Content.ReadAsStringAsync();
 
@@ -191,7 +195,7 @@ public int HttpClientTimeout { get; set; } = 0;
     public async Task<HttpResponseMessage> DeleteRawAsync(string uri, string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null, string clientName = "")
     {
-        using HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
+      HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         return await SendBasic(HttpMethod.Delete, uri, client, null);
     }
 
@@ -211,7 +215,7 @@ public int HttpClientTimeout { get; set; } = 0;
     Dictionary<string, string>? headers = null,
     string clientName = "")
     {
-        using HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
+      HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
 
         HttpContent? content = null;
         if (!string.IsNullOrWhiteSpace(requestJsonData))
@@ -244,7 +248,12 @@ public int HttpClientTimeout { get; set; } = 0;
         string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null, string clientName = "")
     {
-        using HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
+        if (payload == null || payload.Count == 0)
+        {
+            throw new ArgumentException("Payload cannot be null or empty.", nameof(payload));
+        }
+
+      HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         HttpContent? content = payload.Count > 0 ? new FormUrlEncodedContent(payload) : null;
         HttpResponseMessage response = await SendBasic(HttpMethod.Post, uri, client, content);
         return await HandleResponse<T>(response);
@@ -254,7 +263,12 @@ public int HttpClientTimeout { get; set; } = 0;
         string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null, string clientName = "")
     {
-        using HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
+        if (payload == null || payload.Count == 0)
+        {
+            throw new ArgumentException("Payload cannot be null or empty.", nameof(payload));
+        }
+
+      HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         HttpContent? content = payload.Count > 0 ? new FormUrlEncodedContent(payload) : null;
         HttpResponseMessage response = await SendBasic(HttpMethod.Post, uri, client, content);
         return await HandleResponse<HttpResult>(response);
@@ -267,7 +281,7 @@ public int HttpClientTimeout { get; set; } = 0;
         string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null, string clientName = "")
     {
-        using HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
+      HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         HttpResponseMessage response = await SendBasic(HttpMethod.Post, uri, client, multipartForm);
         return await HandleResponse<T>(response);
     }
@@ -276,7 +290,7 @@ public int HttpClientTimeout { get; set; } = 0;
         string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null, string clientName = "")
     {
-        using HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
+      HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         return await SendBasic(HttpMethod.Post, uri, client, multipartForm);
     }
 
@@ -286,7 +300,7 @@ public int HttpClientTimeout { get; set; } = 0;
     public async Task<HttpResponseMessage> PostRawAsync(string uri, string? authHeaderName = null, string? xAuthToken = null,
         string? requestJsonData = null, Dictionary<string, string>? headers = null, string clientName = "")
     {
-        using HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
+      HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         HttpContent content = new StringContent(requestJsonData ?? "", Encoding.UTF8, "application/json");
         return await SendBasic(HttpMethod.Post, uri, client, content);
     }
@@ -294,7 +308,7 @@ public int HttpClientTimeout { get; set; } = 0;
     public async Task<HttpResponseMessage> PutRawAsync(string uri, string? authHeaderName = null, string? xAuthToken = null,
         string? requestJsonData = null, Dictionary<string, string>? headers = null, string clientName = "")
     {
-        using HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
+      HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         HttpContent content = new StringContent(requestJsonData ?? "", Encoding.UTF8, "application/json");
         return await SendBasic(HttpMethod.Put, uri, client, content);
     }
