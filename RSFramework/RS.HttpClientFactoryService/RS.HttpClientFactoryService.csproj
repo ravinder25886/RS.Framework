@@ -4,10 +4,80 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>RS HttpClient Factory Service</Title>
+    <Authors>Ravinder Singh</Authors>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <Description>RS.HttpClientFactoryService
+
+A lightweight and flexible HTTP client service for ASP.NET Core, built on top of IHttpClientFactory. Simplifies making HTTP requests with built-in support for:
+
+GET, POST, PUT, PATCH, DELETE requests
+
+JSON serialization/deserialization with System.Text.Json
+
+Optional custom headers, authorization tokens, and named HttpClients
+
+Multipart and FormUrlEncoded requests
+
+Handling responses with structured HttpResult&lt;T&gt;
+
+Optional CancellationToken support for request cancellation
+
+Minimal boilerplate code, making HTTP calls easier and more maintainable
+
+Ideal for developers who want a consistent, reusable, and testable HTTP client service across projects without relying on heavy third-party libraries.
+
+Read more: https://www.theravinder.com/blog/rs-httpclientfactoryservice-colon-and-hyphen-a-cleaner-way-to-call-apis-in--dot-net-10068</Description>
+    <Copyright>Copyright (c) 2025 www.theravinder.com. All rights reserved.</Copyright>
+    <PackageProjectUrl>https://github.com/ravinder25886/RS.Framework/tree/master/RSFramework/RS.HttpClientFactoryService</PackageProjectUrl>
+    <PackageIcon>NuGet icon 256x256 f.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/ravinder25886/RS.Framework/tree/master/RSFramework/RS.HttpClientFactoryService</RepositoryUrl>
+    <PackageTags>httpclient;httpclientfactory;ihttpclientfactory;rest-client;api-client;http-client;http;webapi;rest;typed-client;named-client;dotnet;dotnet-core;aspnetcore;api-wrapper;serialization;json;json-serialization;deserialization;dependency-injection;resilience;retry;timeout;csharp;http-requests;clean-architecture;best-practices;polly;logging;resilient-http;error-handling;multipart;file-upload;authentication;bearer-token</PackageTags>
+    <PackageReleaseNotes>Release Notes – v1.0.0
+
+Initial release of HttpClientFactoryService
+
+Provides a centralized and reusable wrapper around IHttpClientFactory
+
+Supports GET, POST, PUT, PATCH, DELETE, and multipart/form-data requests
+
+Built-in JSON serialization/deserialization
+
+Supports custom headers and authorization tokens
+
+Includes standardized error handling and response validation
+
+Optional request timeout and cancellation token support
+
+Designed for clean architecture and reusable API integration
+
+Compatible with .NET 8+</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NuGet icon 256x256 f.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="NuGet icon 32x32 fea.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="RSHttpClientFactoryService.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
