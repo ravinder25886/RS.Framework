@@ -67,10 +67,10 @@ public int HttpClientTimeout { get; set; } = 0;
     // ============================================================
     // Helper: Send Request
     // ============================================================
-    private Task<HttpResponseMessage> SendBasic(HttpMethod method, string uri, HttpClient client, HttpContent? content)
+    private Task<HttpResponseMessage> SendBasic(HttpMethod method, string uri, HttpClient client, HttpContent? content, CancellationToken cancellationToken = default)
     {
         HttpRequestMessage req = new HttpRequestMessage(method, uri) { Content = content };
-        return client.SendAsync(req);
+        return client.SendAsync(req, cancellationToken);
     }
 
     // ============================================================
@@ -123,7 +123,7 @@ public int HttpClientTimeout { get; set; } = 0;
     // ============================================================
     private async Task<HttpResult<T>> SendJsonAsync<T>(HttpMethod method, string uri, object? payload = null,
         string? authHeaderName = null, string? xAuthToken = null,
-        Dictionary<string, string>? headers = null, string clientName = "")
+        Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
       HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
 
@@ -134,7 +134,7 @@ public int HttpClientTimeout { get; set; } = 0;
             content = new StringContent(json, Encoding.UTF8, "application/json");
         }
 
-        HttpResponseMessage response = await SendBasic(method, uri, client, content);
+        HttpResponseMessage response = await SendBasic(method, uri, client, content, cancellationToken);
         return await HandleResponse<T>(response);
     }
 
@@ -142,23 +142,23 @@ public int HttpClientTimeout { get; set; } = 0;
     // GET
     // ============================================================
     public async Task<HttpResult<T>> GetAsync<T>(string uri, string? authHeaderName = null, string? xAuthToken = null,
-        Dictionary<string, string>? headers = null, string clientName = "")
+        Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
-        return await SendJsonAsync<T>(HttpMethod.Get, uri, null, authHeaderName, xAuthToken, headers, clientName);
+        return await SendJsonAsync<T>(HttpMethod.Get, uri, null, authHeaderName, xAuthToken, headers, clientName, cancellationToken);
     }
 
     public async Task<HttpResponseMessage> GetRawAsync(string uri, string? authHeaderName = null, string? xAuthToken = null,
-        Dictionary<string, string>? headers = null, string clientName = "")
+        Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
       HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
-        return await SendBasic(HttpMethod.Get, uri, client, null);
+        return await SendBasic(HttpMethod.Get, uri, client,null, cancellationToken);
     }
 
     public async Task<byte[]> GetByteArrayAsync(string uri, string? authHeaderName = null, string? xAuthToken = null,
-        Dictionary<string, string>? headers = null, string clientName = "")
+        Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
       HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
-        HttpResponseMessage response = await SendBasic(HttpMethod.Get, uri, client, null);
+        HttpResponseMessage response = await SendBasic(HttpMethod.Get, uri, client, null, cancellationToken);
         return await response.Content.ReadAsByteArrayAsync();
     }
 
@@ -167,9 +167,9 @@ public int HttpClientTimeout { get; set; } = 0;
      string? authHeaderName = null,
      string? xAuthToken = null,
      Dictionary<string, string>? headers = null,
-     string clientName = "")
+     string clientName = "", CancellationToken cancellationToken = default)
     {
-        return await SendJsonAsync<T>(HttpMethod.Get, url, null, authHeaderName, xAuthToken, headers, clientName)
+        return await SendJsonAsync<T>(HttpMethod.Get, url, null, authHeaderName, xAuthToken, headers, clientName,cancellationToken)
        .ContinueWith(t => t.Result.Data!);
     }
 
@@ -178,10 +178,10 @@ public int HttpClientTimeout { get; set; } = 0;
     // DELETE
     // ============================================================
     public async Task<HttpResult> DeleteAsync(string uri, string? authHeaderName = null, string? xAuthToken = null,
-        Dictionary<string, string>? headers = null, string clientName = "")
+        Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
       HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
-        HttpResponseMessage response = await SendBasic(HttpMethod.Delete, uri, client, null);
+        HttpResponseMessage response = await SendBasic(HttpMethod.Delete, uri, client, null, cancellationToken);
         string body = await response.Content.ReadAsStringAsync();
 
         return new HttpResult
@@ -193,19 +193,19 @@ public int HttpClientTimeout { get; set; } = 0;
     }
 
     public async Task<HttpResponseMessage> DeleteRawAsync(string uri, string? authHeaderName = null, string? xAuthToken = null,
-        Dictionary<string, string>? headers = null, string clientName = "")
+        Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
       HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
-        return await SendBasic(HttpMethod.Delete, uri, client, null);
+        return await SendBasic(HttpMethod.Delete, uri, client, null, cancellationToken);
     }
 
     // ============================================================
     // POST / PUT / PATCH JSON
     // ============================================================
     public Task<HttpResult<T>> PostAsync<T>(string uri, string? authHeaderName = null, string? xAuthToken = null,
-        string? requestJsonData = null, Dictionary<string, string>? headers = null, string clientName = "")
+        string? requestJsonData = null, Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
-        return SendJsonAsync<T>(HttpMethod.Post, uri, requestJsonData, authHeaderName, xAuthToken, headers, clientName);
+        return SendJsonAsync<T>(HttpMethod.Post, uri, requestJsonData, authHeaderName, xAuthToken, headers, clientName, cancellationToken);
     }
     public async Task<HttpResult> PostAsync(
     string uri,
@@ -213,7 +213,7 @@ public int HttpClientTimeout { get; set; } = 0;
     string? xAuthToken = null,
     string? requestJsonData = null,
     Dictionary<string, string>? headers = null,
-    string clientName = "")
+    string clientName = "", CancellationToken cancellationToken = default)
     {
       HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
 
@@ -224,21 +224,21 @@ public int HttpClientTimeout { get; set; } = 0;
         }
 
         // Send the request
-        HttpResponseMessage response = await SendBasic(HttpMethod.Post, uri, client, content);
+        HttpResponseMessage response = await SendBasic(HttpMethod.Post, uri, client, content, cancellationToken);
 
         // Handle response
         return await HandleResponse<HttpResult>(response);
     }
     public Task<HttpResult<T>> PutAsync<T>(string uri, string? authHeaderName = null, string? xAuthToken = null,
-        string? requestJsonData = null, Dictionary<string, string>? headers = null, string clientName = "")
+        string? requestJsonData = null, Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
-        return SendJsonAsync<T>(HttpMethod.Put, uri, requestJsonData, authHeaderName, xAuthToken, headers, clientName);
+        return SendJsonAsync<T>(HttpMethod.Put, uri, requestJsonData, authHeaderName, xAuthToken, headers, clientName, cancellationToken);
     }
 
     public Task<HttpResult<T>> PatchAsync<T>(string uri, string? authHeaderName = null, string? xAuthToken = null,
-        string? requestJsonData = null, Dictionary<string, string>? headers = null, string clientName = "")
+        string? requestJsonData = null, Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
-        return SendJsonAsync<T>(new HttpMethod("PATCH"), uri, requestJsonData, authHeaderName, xAuthToken, headers, clientName);
+        return SendJsonAsync<T>(new HttpMethod("PATCH"), uri, requestJsonData, authHeaderName, xAuthToken, headers, clientName, cancellationToken);
     }
 
     // ============================================================
@@ -246,7 +246,7 @@ public int HttpClientTimeout { get; set; } = 0;
     // ============================================================
     public async Task<HttpResult<T>> PostFormAsync<T>(string uri, Dictionary<string, string> payload,
         string? authHeaderName = null, string? xAuthToken = null,
-        Dictionary<string, string>? headers = null, string clientName = "")
+        Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
         if (payload == null || payload.Count == 0)
         {
@@ -255,13 +255,13 @@ public int HttpClientTimeout { get; set; } = 0;
 
       HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         HttpContent? content = payload.Count > 0 ? new FormUrlEncodedContent(payload) : null;
-        HttpResponseMessage response = await SendBasic(HttpMethod.Post, uri, client, content);
+        HttpResponseMessage response = await SendBasic(HttpMethod.Post, uri, client, content, cancellationToken);
         return await HandleResponse<T>(response);
     }
 
     public async Task<HttpResult> PostFormAsync(string uri, Dictionary<string, string> payload,
         string? authHeaderName = null, string? xAuthToken = null,
-        Dictionary<string, string>? headers = null, string clientName = "")
+        Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
         if (payload == null || payload.Count == 0)
         {
@@ -270,7 +270,7 @@ public int HttpClientTimeout { get; set; } = 0;
 
       HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         HttpContent? content = payload.Count > 0 ? new FormUrlEncodedContent(payload) : null;
-        HttpResponseMessage response = await SendBasic(HttpMethod.Post, uri, client, content);
+        HttpResponseMessage response = await SendBasic(HttpMethod.Post, uri, client, content, cancellationToken);
         return await HandleResponse<HttpResult>(response);
     }
 
@@ -279,38 +279,38 @@ public int HttpClientTimeout { get; set; } = 0;
     // ============================================================
     public async Task<HttpResult<T>> PostMultipartAsync<T>(string uri, MultipartFormDataContent multipartForm,
         string? authHeaderName = null, string? xAuthToken = null,
-        Dictionary<string, string>? headers = null, string clientName = "")
+        Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
       HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
-        HttpResponseMessage response = await SendBasic(HttpMethod.Post, uri, client, multipartForm);
+        HttpResponseMessage response = await SendBasic(HttpMethod.Post, uri, client, multipartForm, cancellationToken);
         return await HandleResponse<T>(response);
     }
 
     public async Task<HttpResponseMessage> PostMultipartRawAsync(string uri, MultipartFormDataContent multipartForm,
         string? authHeaderName = null, string? xAuthToken = null,
-        Dictionary<string, string>? headers = null, string clientName = "")
+        Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
       HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
-        return await SendBasic(HttpMethod.Post, uri, client, multipartForm);
+        return await SendBasic(HttpMethod.Post, uri, client, multipartForm, cancellationToken);
     }
 
     // ============================================================
     // Raw Requests
     // ============================================================
     public async Task<HttpResponseMessage> PostRawAsync(string uri, string? authHeaderName = null, string? xAuthToken = null,
-        string? requestJsonData = null, Dictionary<string, string>? headers = null, string clientName = "")
+        string? requestJsonData = null, Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
       HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         HttpContent content = new StringContent(requestJsonData ?? "", Encoding.UTF8, "application/json");
-        return await SendBasic(HttpMethod.Post, uri, client, content);
+        return await SendBasic(HttpMethod.Post, uri, client, content, cancellationToken);
     }
 
     public async Task<HttpResponseMessage> PutRawAsync(string uri, string? authHeaderName = null, string? xAuthToken = null,
-        string? requestJsonData = null, Dictionary<string, string>? headers = null, string clientName = "")
+        string? requestJsonData = null, Dictionary<string, string>? headers = null, string clientName = "", CancellationToken cancellationToken = default)
     {
       HttpClient client = CreateClient(authHeaderName, xAuthToken, headers, clientName);
         HttpContent content = new StringContent(requestJsonData ?? "", Encoding.UTF8, "application/json");
-        return await SendBasic(HttpMethod.Put, uri, client, content);
+        return await SendBasic(HttpMethod.Put, uri, client, content, cancellationToken);
     }
     
 }

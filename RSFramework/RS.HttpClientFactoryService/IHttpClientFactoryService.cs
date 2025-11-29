@@ -25,7 +25,7 @@ public interface IHttpClientFactoryService
     public Task<HttpResult<T>> GetAsync<T>(
         string uri, string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Executes HTTP operation: Task<HttpResponseMessage> GetRawAsync.
@@ -39,7 +39,7 @@ public interface IHttpClientFactoryService
     public Task<HttpResponseMessage> GetRawAsync(
         string uri, string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Executes HTTP operation: Task<byte[]> GetByteArrayAsync.
@@ -53,7 +53,7 @@ public interface IHttpClientFactoryService
     public Task<byte[]> GetByteArrayAsync(
         string uri, string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Executes HTTP operation: Task<T> GetObjectAsync<T>.
@@ -68,7 +68,7 @@ public interface IHttpClientFactoryService
      string? authHeaderName = null,
      string? xAuthToken = null,
      Dictionary<string, string>? headers = null,
-     string clientName = "");
+     string clientName = "", CancellationToken cancellationToken = default);
 
     // ============================================================
     // DELETE
@@ -86,7 +86,7 @@ public interface IHttpClientFactoryService
     public Task<HttpResult> DeleteAsync(
         string uri, string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Executes HTTP operation: Task<HttpResponseMessage> DeleteRawAsync.
@@ -100,7 +100,7 @@ public interface IHttpClientFactoryService
     public Task<HttpResponseMessage> DeleteRawAsync(
         string uri, string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
     // ============================================================
     // POST (JSON)
@@ -119,7 +119,7 @@ public interface IHttpClientFactoryService
         string uri, string? authHeaderName = null, string? xAuthToken = null,
         string? requestJsonData = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Executes HTTP operation: Task<HttpResult> PostAsync.
@@ -134,7 +134,7 @@ public interface IHttpClientFactoryService
         string uri, string? authHeaderName = null, string? xAuthToken = null,
         string? requestJsonData = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Executes HTTP operation: Task<HttpResponseMessage> PostRawAsync.
@@ -149,7 +149,7 @@ public interface IHttpClientFactoryService
         string uri, string? authHeaderName = null, string? xAuthToken = null,
         string? requestJsonData = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
     // ============================================================
     // POST (Multipart)
@@ -167,7 +167,7 @@ public interface IHttpClientFactoryService
     public Task<HttpResult<T>> PostMultipartAsync<T>(
         string uri, MultipartFormDataContent multipartForm, string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Executes HTTP operation: Task<HttpResponseMessage> PostMultipartRawAsync.
@@ -181,7 +181,7 @@ public interface IHttpClientFactoryService
     public Task<HttpResponseMessage> PostMultipartRawAsync(
         string uri, MultipartFormDataContent multipartForm, string? authHeaderName = null, string? xAuthToken = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
     // ============================================================
     // PUT
@@ -200,7 +200,7 @@ public interface IHttpClientFactoryService
         string uri, string? authHeaderName = null, string? xAuthToken = null,
         string? requestJsonData = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Executes HTTP operation: Task<HttpResponseMessage> PutRawAsync.
@@ -215,7 +215,7 @@ public interface IHttpClientFactoryService
         string uri, string? authHeaderName = null, string? xAuthToken = null,
         string? requestJsonData = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
     // ============================================================
     // POST (Form URL Encoded)
@@ -235,7 +235,7 @@ public interface IHttpClientFactoryService
         string? authHeaderName = null,
         string? xAuthToken = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
     /// <summary>
     /// Executes HTTP operation: Task<HttpResult> PostFormAsync.
     /// </summary>
@@ -251,7 +251,7 @@ public interface IHttpClientFactoryService
         string? authHeaderName = null,
         string? xAuthToken = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
 
     // ============================================================
@@ -272,7 +272,7 @@ public interface IHttpClientFactoryService
         string? authHeaderName = null,
         string? xAuthToken = null, string? requestJsonData = null,
         Dictionary<string, string>? headers = null,
-        string clientName = "");
+        string clientName = "", CancellationToken cancellationToken = default);
 
 }
 
