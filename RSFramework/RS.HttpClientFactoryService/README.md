@@ -1,6 +1,4 @@
-﻿{"variant":"standard","id":"52123","title":"HttpClientFactoryService README"}
-
-\# HttpClientFactoryService
+﻿# HttpClientFactoryService
 
 
 
@@ -32,7 +30,7 @@ Supports JSON, form data, multipart requests, GET/POST/PUT/PATCH/DELETE operatio
 
 \- Supports cancellation via `CancellationToken`
 
-\- Works with .NET 6, 7, 8+
+\- Works with .NET 8+
 
 
 
@@ -44,13 +42,13 @@ Supports JSON, form data, multipart requests, GET/POST/PUT/PATCH/DELETE operatio
 
 
 
-Install via NuGet (example package name `comming soon..`):
+Install via NuGet (example package name `RS.HttpClientFactoryService`):
 
 
 
 ```bash
 
-dotnet add package comming soon..
+dotnet add package RS.HttpClientFactoryService
 
 ```
 
@@ -94,13 +92,13 @@ public class Post
 
 {
 
-&nbsp;   public int UserId { get; set; }
+public int UserId { get; set; }
 
-&nbsp;   public int Id { get; set; }
+public int Id { get; set; }
 
-&nbsp;   public string Title { get; set; }
+public string Title { get; set; }
 
-&nbsp;   public string Body { get; set; }
+public string Body { get; set; }
 
 }
 
@@ -122,41 +120,41 @@ public class PostsController : ControllerBase
 
 {
 
-&nbsp;   private readonly IHttpClientFactoryService \_httpService;
+private readonly IHttpClientFactoryService _httpService;
 
 
 
-&nbsp;   public PostsController(IHttpClientFactoryService httpService)
+public PostsController(IHttpClientFactoryService httpService)
 
-&nbsp;   {
+{
 
-&nbsp;       \_httpService = httpService;
+    _httpService = httpService;
 
-&nbsp;   }
-
-
-
-&nbsp;   \[HttpGet("posts")]
-
-&nbsp;   public async Task<IActionResult> GetPosts(CancellationToken cancellationToken)
-
-&nbsp;   {
-
-&nbsp;       var result = await \_httpService.GetAsync<List<Post>>(
-
-&nbsp;           uri: "posts",
-
-&nbsp;           clientName: "JsonPlaceholder",
-
-&nbsp;           cancellationToken: cancellationToken
-
-&nbsp;       );
+}
 
 
 
-&nbsp;       return result.IsSuccess ? Ok(result.Data) : BadRequest(result.Message);
+[HttpGet("posts")]
 
-&nbsp;   }
+public async Task<IActionResult> GetPosts(CancellationToken cancellationToken)
+
+{
+
+    var result = await _httpService.GetAsync<List<Post>>(
+
+        uri: "posts",
+
+        clientName: "JsonPlaceholder",
+
+        cancellationToken: cancellationToken
+
+    );
+
+
+
+    return result.IsSuccess ? Ok(result.Data) : BadRequest(result.Message);
+
+}
 
 }
 
@@ -168,7 +166,7 @@ public class PostsController : ControllerBase
 
 
 
-\### POST Example (JSON from C# model)
+### POST Example (JSON from C# model)
 
 
 
@@ -176,15 +174,15 @@ public class PostsController : ControllerBase
 
 var newPost = new Post { UserId = 1, Title = "Hello", Body = "World" };
 
-var postResult = await \_httpService.PostAsync<Post>(
+var postResult = await _httpService.PostAsync<Post>(
 
-&nbsp;   uri: "posts",
+uri: "posts",
 
-&nbsp;   requestJsonData: JsonSerializer.Serialize(newPost),
+requestJsonData: JsonSerializer.Serialize(newPost),
 
-&nbsp;   clientName: "JsonPlaceholder",
+clientName: "JsonPlaceholder",
 
-&nbsp;   cancellationToken: cancellationToken
+cancellationToken: cancellationToken
 
 );
 
@@ -196,7 +194,7 @@ var postResult = await \_httpService.PostAsync<Post>(
 
 
 
-\### CancellationToken Support
+### CancellationToken Support
 
 
 
@@ -208,13 +206,13 @@ You can pass a `CancellationToken` to cancel requests:
 
 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
 
-var result = await \_httpService.GetAsync<List<Post>>(
+var result = await _httpService.GetAsync<List<Post>>(
 
-&nbsp;   "posts",
+"posts",
 
-&nbsp;   clientName: "JsonPlaceholder",
+clientName: "JsonPlaceholder",
 
-&nbsp;   cancellationToken: cts.Token
+cancellationToken: cts.Token
 
 );
 
@@ -226,7 +224,7 @@ var result = await \_httpService.GetAsync<List<Post>>(
 
 
 
-\## Advanced Features
+## Advanced Features
 
 
 
@@ -240,15 +238,15 @@ var multipartContent = new MultipartFormDataContent();
 
 multipartContent.Add(new StringContent("John"), "name");
 
-var response = await \_httpService.PostMultipartAsync<HttpResult>(
+var response = await _httpService.PostMultipartAsync<HttpResult>(
 
-&nbsp;   "users/upload",
+"users/upload",
 
-&nbsp;   multipartContent,
+multipartContent,
 
-&nbsp;   clientName: "MyApi",
+clientName: "MyApi",
 
-&nbsp;   cancellationToken: cancellationToken
+cancellationToken: cancellationToken
 
 );
 
@@ -266,21 +264,21 @@ var formData = new Dictionary<string, string>
 
 {
 
-&nbsp;   { "username", "john" },
+{ "username", "john" },
 
-&nbsp;   { "password", "secret" }
+{ "password", "secret" }
 
 };
 
-var result = await \_httpService.PostFormAsync<HttpResult>(
+var result = await _httpService.PostFormAsync<HttpResult>(
 
-&nbsp;   "login",
+"login",
 
-&nbsp;   formData,
+formData,
 
-&nbsp;   clientName: "MyApi",
+clientName: "MyApi",
 
-&nbsp;   cancellationToken: cancellationToken
+cancellationToken: cancellationToken
 
 );
 
@@ -292,7 +290,7 @@ var result = await \_httpService.PostFormAsync<HttpResult>(
 
 
 
-\## Why use `HttpClientFactoryService`?
+## Why use `HttpClientFactoryService`?
 
 
 
@@ -310,6 +308,11 @@ var result = await \_httpService.PostFormAsync<HttpResult>(
 
 ---
 
+## Read more / Full Article
+
+For detailed explanation, motivation, and examples — see the full blog post:  
+[RS.HttpClientFactoryService — A Cleaner Way to Call APIs in .NET]  
+(https://www.theravinder.com/blog/rs-httpclientfactoryservice-colon-and-hyphen-a-cleaner-way-to-call-apis-in--dot-net-10068)
 
 
 \## License
