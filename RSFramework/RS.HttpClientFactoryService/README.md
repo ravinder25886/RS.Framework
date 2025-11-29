@@ -44,13 +44,13 @@ Supports JSON, form data, multipart requests, GET/POST/PUT/PATCH/DELETE operatio
 
 
 
-Install via NuGet (example package name `RS.HttpClientFactoryService`):
+Install via NuGet (example package name `comming soon..`):
 
 
 
 ```bash
 
-dotnet add package RS.HttpClientFactoryService
+dotnet add package comming soon..
 
 ```
 
