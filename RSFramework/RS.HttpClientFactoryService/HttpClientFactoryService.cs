@@ -13,7 +13,7 @@ public class HttpClientFactoryService : IHttpClientFactoryService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly JsonSerializerOptions _jsonOptions;
 public int HttpClientTimeout { get; set; } = 0;
-
+     
     public HttpClientFactoryService(IHttpClientFactory httpClientFactory)
     {
         _httpClientFactory = httpClientFactory;
