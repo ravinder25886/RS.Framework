@@ -43,7 +43,7 @@ public class TestApiController(IHttpClientFactoryService httpService) : Controll
     [HttpPost("posts")]
     public async Task<IActionResult> CreatePost([FromBody] Post newPost)
     {
-
+         
         CreatePostModel post = new CreatePostModel
         {
             UserId = 1,
